@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dinh Hoang Tam Binh — AI Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Roboto+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #0f0f17;
+      --surface: #14141e;
+      --border: rgba(255,255,255,0.07);
+      --accent: #00e5b0;
+      --accent2: #7b61ff;
+      --accent3: #ff6b6b;
+      --text: #e8e8f0;
+      --muted: #7a7a9a;
+      --white: #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.35;
+    }
+
+    /* ── CURSOR GLOW ── */
+    .cursor-glow {
+      position: fixed; width: 400px; height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,229,176,0.06) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+      transform: translate(-50%, -50%);
+      transition: left 0.3s ease, top 0.3s ease;
+    }
+
+    /* ── LAYOUT ── */
+    .wrapper {
+      position: relative; z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      backdrop-filter: blur(20px);
+      background: rgba(10,10,15,0.85);
+      border-bottom: 1px solid var(--border);
+    }
+    nav .inner {
+      max-width: 1100px; margin: 0 auto; padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-weight: 800; font-size: 17px;
+      color: var(--white); letter-spacing: -0.3px;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 12px; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding-top: 60px;
+      position: relative;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px; align-items: center;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent);
+      background: rgba(0,229,176,0.08);
+      border: 1px solid rgba(0,229,176,0.2);
+      border-radius: 100px; padding: 5px 14px;
+      margin-bottom: 28px;
+    }
+    .hero-tag::before {
+      content: ''; width: 6px; height: 6px;
+      background: var(--accent); border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    h1 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: clamp(42px, 5vw, 68px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      color: var(--white);
+      margin-bottom: 24px;
+    }
+    h1 .line2 { color: var(--accent); display: block; }
+    .hero-desc {
+      font-size: 16px; color: var(--muted);
+      line-height: 1.8; margin-bottom: 40px;
+      max-width: 440px;
+    }
+    .hero-cta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 12px; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 13px 28px; border-radius: 6px;
+      text-decoration: none; font-weight: 400;
+      transition: all 0.2s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--accent); color: #000;
+    }
+    .btn-primary:hover { background: #00ffca; transform: translateY(-2px); }
+    .btn-ghost {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* Hero right — floating cards */
+    .hero-right { position: relative; }
+    .stat-cards {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px;
+      position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute; top: -30px; right: -30px;
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      opacity: 0.4;
+    }
+    .stat-card:nth-child(1)::before { background: var(--accent); }
+    .stat-card:nth-child(2)::before { background: var(--accent2); }
+    .stat-card:nth-child(3)::before { background: var(--accent3); }
+    .stat-card:nth-child(4)::before { background: var(--accent); }
+    .stat-card:nth-child(1) { grid-column: span 2; }
+    .stat-num {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 38px; font-weight: 800;
+      color: var(--white); line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 11px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .stat-card.wide { display: flex; align-items: center; gap: 20px; }
+    .stat-card.wide .stat-num { font-size: 28px; }
+    .tech-chips {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;
+    }
+    .chip {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 10px; letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 4px 10px; border-radius: 4px;
+      background: rgba(255,255,255,0.05);
+      color: var(--muted); border: 1px solid var(--border);
+    }
+    .chip.green { background: rgba(0,229,176,0.1); color: var(--accent); border-color: rgba(0,229,176,0.2); }
+    .chip.purple { background: rgba(123,97,255,0.1); color: var(--accent2); border-color: rgba(123,97,255,0.2); }
+
+    /* ── SECTION BASE ── */
+    section { padding: 100px 0; }
+    .section-tag {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 11px; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h2 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: clamp(30px, 4vw, 46px);
+      font-weight: 800; color: var(--white);
+      letter-spacing: -1.5px; line-height: 1.1;
+      margin-bottom: 56px;
+    }
+    h2 em { font-style: normal; color: var(--accent); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px; background: var(--border);
+      position: relative; overflow: visible;
+    }
+
+    /* ── SKILLS ── */
+    #skills { background: var(--bg2); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px;
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .skill-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .skill-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 20px;
+    }
+    .skill-icon.teal { background: rgba(0,229,176,0.12); }
+    .skill-icon.purple { background: rgba(123,97,255,0.12); }
+    .skill-icon.red { background: rgba(255,107,107,0.12); }
+    .skill-card h3 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 17px; font-weight: 700;
+      color: var(--white); margin-bottom: 12px;
+    }
+    .skill-card p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+    .skill-tag {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 10px; letter-spacing: 0.06em;
+      padding: 3px 9px; border-radius: 4px;
+      color: var(--muted); background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+    }
+
+    /* ── EXPERIENCE ── */
+    .exp-list { display: flex; flex-direction: column; gap: 0; }
+    .exp-item {
+      display: grid; grid-template-columns: 200px 1fr;
+      gap: 40px; padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .exp-item:last-child { border-bottom: none; }
+    .exp-meta {
+      padding-top: 4px;
+    }
+    .exp-date {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 11px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .exp-company {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 14px; font-weight: 700;
+      color: var(--muted);
+    }
+    .exp-content h3 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 20px; font-weight: 700;
+      color: var(--white); margin-bottom: 12px;
+    }
+    .exp-content ul {
+      list-style: none; padding: 0;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .exp-content ul li {
+      font-size: 14px; color: var(--muted);
+      padding-left: 18px; position: relative; line-height: 1.7;
+    }
+    .exp-content ul li::before {
+      content: '→';
+      position: absolute; left: 0;
+      color: var(--accent); font-size: 12px;
+    }
+
+    /* ── PROJECTS ── */
+    #projects { background: var(--bg2); }
+    .projects-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 36px;
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .project-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .project-card:hover { border-color: rgba(0,229,176,0.3); transform: translateY(-4px); }
+    .project-card:hover::after { transform: scaleX(1); }
+    .project-num {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 48px; font-weight: 800;
+      color: rgba(255,255,255,0.04);
+      position: absolute; top: 20px; right: 24px;
+      line-height: 1;
+    }
+    .project-card h3 {
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 19px; font-weight: 700;
+      color: var(--white); margin-bottom: 14px;
+    }
+    .project-card p { font-size: 14px; color: var(--muted); line-height: 1.8; }
+    .project-tech { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+
+    /* ── TECH STACK ── */
+    .stack-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .stack-cat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 24px;
+    }
+    .stack-cat h4 {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .stack-items { display: flex; flex-direction: column; gap: 8px; }
+    .stack-item {
+      font-size: 13px; color: var(--muted);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stack-item:last-child { border-bottom: none; }
+
+    /* ── CONTACT ── */
+    #contact {
+      text-align: center;
+    }
+    .contact-box {
+      max-width: 600px; margin: 0 auto;
+    }
+    .contact-box p {
+      color: var(--muted); font-size: 16px;
+      line-height: 1.8; margin-bottom: 40px;
+    }
+    .contact-links {
+      display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+      margin-bottom: 60px;
+    }
+    .contact-link {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 12px; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      padding: 12px 24px; border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .contact-link:hover {
+      color: var(--accent); border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    footer p {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 11px; letter-spacing: 0.08em;
+      color: var(--muted); text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    .fade-in {
+      opacity: 0; transform: translateY(30px);
+      animation: fadeIn 0.7s ease forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.25s; }
+    .fade-in:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .wrapper { padding: 0 20px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+      .hero-right { display: none; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .exp-item { grid-template-columns: 1fr; gap: 12px; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .stack-grid { grid-template-columns: 1fr 1fr; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor-glow" id="glow"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="inner">
+    <div class="nav-logo">DHTB<span>.</span></div>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="wrapper">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-tag fade-in">Available for opportunities</div>
+        <h1 class="fade-in">
+          Dinh Hoang
+          <span class="line2">Tam Binh</span>
+        </h1>
+        <p class="hero-desc fade-in">
+          AI Engineer focused on building production-grade RAG pipelines, Computer Vision systems, and intelligent backends. I turn messy unstructured data into precise, queryable knowledge.
+        </p>
+        <div class="hero-cta fade-in">
+          <a href="#experience" class="btn btn-ghost">View experience</a>
+        </div>
+      </div>
+      <div class="hero-right fade-in">
+        <div class="stat-cards">
+          <div class="stat-card wide">
+            <div>
+              <div class="stat-num">∼92%</div>
+              <div class="stat-label">Image Retrieval Accuracy</div>
+            </div>
+            <div class="tech-chips">
+              <span class="chip green">YOLO</span>
+              <span class="chip green">Swin Transformer</span>
+              <span class="chip green">FAISS</span>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">1+</div>
+            <div class="stat-label">Years Building AI</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">3.3</div>
+            <div class="stat-label">GPA — UIT CS</div>
+          </div>
+          <div class="stat-card wide">
+            <div>
+              <div class="stat-num">IELTS 7.0</div>
+              <div class="stat-label">English Proficiency</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><div class="wrapper"></div></div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="wrapper">
+    <div class="section-tag">// Core Competencies</div>
+    <h2>What I <em>build</em></h2>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-icon teal">🔍</div>
+        <h3>RAG Systems</h3>
+        <p>End-to-end pipelines from document parsing to hybrid retrieval. Dense + sparse search, reranking, semantic chunking, and LLM-based evaluation guardrails.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">LangChain</span>
+          <span class="skill-tag">LangGraph</span>
+          <span class="skill-tag">Qdrant</span>
+          <span class="skill-tag">FAISS</span>
+          <span class="skill-tag">OpenAI API</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon purple">👁</div>
+        <h3>Computer Vision</h3>
+        <p>Object detection, instance segmentation, and image retrieval pipelines. Full training cycles — data labeling, augmentation, evaluation, and production serving.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">YOLO</span>
+          <span class="skill-tag">Swin Transformer</span>
+          <span class="skill-tag">PyTorch</span>
+          <span class="skill-tag">OpenCV</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon red">⚙️</div>
+        <h3>AI Backend & Infra</h3>
+        <p>Production-ready RESTful AI services. Vector store integration, model quantization for latency reduction, and containerized deployments.</p>
+        <div class="skill-tags">
+          <span class="skill-tag">FastAPI</span>
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">vLLM</span>
+          <span class="skill-tag">Groq</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="wrapper">
+    <div class="section-tag">// Work History</div>
+    <h2>Where I've <em>worked</em></h2>
+    <div class="exp-list">
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">Oct 2025 — Present</div>
+          <div class="exp-company">Tech JDI</div>
+        </div>
+        <div class="exp-content">
+          <h3>AI Engineer</h3>
+          <ul>
+            <li>Designed document-to-structured-data pipelines for domain-specific knowledge bases, enabling downstream LLM retrieval and reasoning.</li>
+            <li>Built hybrid search (dense + sparse) with reranking to match natural-language requirements against structured knowledge, improving retrieval precision.</li>
+            <li>Owned solution architecture and optimization decisions on constraint-driven systems, improving processing throughput.</li>
+            <li>Applied model quantization to reduce inference latency and hardware load without quality degradation.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">Mar 2025 — Oct 2025</div>
+          <div class="exp-company">TAM LUXURY</div>
+        </div>
+        <div class="exp-content">
+          <h3>AI Engineer</h3>
+          <ul>
+            <li>Built end-to-end image retrieval system: instance segmentation (YOLO) → class-level classification (Swin Transformer) → embedding → FAISS similarity search; achieved ~92% validation accuracy.</li>
+            <li>Designed document-to-structured-data pipeline from product PDFs to support catalog management and downstream search systems.</li>
+            <li>Managed full model training cycle: data labeling, preprocessing, augmentation, and evaluation across train/val/test splits.</li>
+            <li>Served trained CV models via FastAPI for integration into production systems.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-meta">
+          <div class="exp-date">Apr 2024 — Jul 2024</div>
+          <div class="exp-company">TADA LABS LTD</div>
+        </div>
+        <div class="exp-content">
+          <h3>Intern AI Engineer</h3>
+          <ul>
+            <li>Prepared training datasets and conducted model experiments.</li>
+            <li>Researched and fine-tuned various Machine Learning models.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="wrapper">
+    <div class="section-tag">// Key Projects</div>
+    <h2>Things I've <em>shipped</em></h2>
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <div class="project-num">01</div>
+        <h3>AI Real Estate Consultant Assistant</h3>
+        <p>Structured knowledge base from real estate documents via schema extraction and vector indexing. Hybrid retrieval with reranking for accurate query handling. Human-like consultation flow with adaptive question selection and multi-turn reminder mechanisms.</p>
+        <div class="project-tech">
+          <span class="chip green">RAG</span>
+          <span class="chip green">LangGraph</span>
+          <span class="chip green">Hybrid Search</span>
+          <span class="chip">Reranking</span>
+          <span class="chip">LLM Eval</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">02</div>
+        <h3>Traffic Planner — Matching & Route Optimization</h3>
+        <p>Supply-demand matching system pairing truck availability with freight requests. Constraint-aware route optimization over Vietnam road network returning turn-by-turn navigation. LLM-based evaluation to rank and validate candidate routes against business constraints.</p>
+        <div class="project-tech">
+          <span class="chip purple">Route Optimization</span>
+          <span class="chip purple">LLM Eval</span>
+          <span class="chip">Constraint Solving</span>
+          <span class="chip">FastAPI</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section id="stack">
+  <div class="wrapper">
+    <div class="section-tag">// Tech Stack</div>
+    <h2>Tools I <em>use</em></h2>
+    <div class="stack-grid">
+      <div class="stack-cat">
+        <h4>Languages</h4>
+        <div class="stack-items">
+          <div class="stack-item">Python</div>
+          <div class="stack-item">JavaScript</div>
+          <div class="stack-item">TypeScript</div>
+        </div>
+      </div>
+      <div class="stack-cat">
+        <h4>AI / ML</h4>
+        <div class="stack-items">
+          <div class="stack-item">PyTorch</div>
+          <div class="stack-item">Transformers</div>
+          <div class="stack-item">OpenCV</div>
+          <div class="stack-item">Scikit-learn</div>
+        </div>
+      </div>
+      <div class="stack-cat">
+        <h4>LLM & RAG</h4>
+        <div class="stack-items">
+          <div class="stack-item">LangGraph</div>
+          <div class="stack-item">LangChain</div>
+          <div class="stack-item">FAISS / Qdrant</div>
+          <div class="stack-item">OpenAI API</div>
+          <div class="stack-item">Groq</div>
+        </div>
+      </div>
+      <div class="stack-cat">
+        <h4>Backend & Infra</h4>
+        <div class="stack-items">
+          <div class="stack-item">FastAPI</div>
+          <div class="stack-item">Docker</div>
+          <div class="stack-item">vLLM</div>
+          <div class="stack-item">GitHub</div>
+          <div class="stack-item">Hugging Face</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrapper">
+    <div class="contact-box">
+      <div class="section-tag" style="text-align:center">// Get in touch</div>
+      <h2 style="margin-bottom:20px">Let's <em>collaborate</em></h2>
+      <p>I'm open to new opportunities in AI engineering — RAG systems, Computer Vision, or production ML. Feel free to reach out via any channel below.</p>
+      <div class="contact-links">
+        <a href="mailto:dhtbinh2012@gmail.com" class="contact-link">
+          <span>✉</span> dhtbinh2012@gmail.com
+        </a>
+        <a href="https://linkedin.com/in/bdinh1873" target="_blank" class="contact-link">
+          <span>in</span> LinkedIn
+        </a>
+        <a href="https://github.com/Dinhhoangtambinh" target="_blank" class="contact-link">
+          <span>⌥</span> GitHub
+        </a>
+        <a href="tel:+84941742972" class="contact-link">
+          <span>☎</span> +84 941 742 972
+        </a>
+      </div>
+      <a href="mailto:dhtbinh2012@gmail.com" class="btn btn-primary" style="font-size:13px; padding: 16px 40px;">
+        Send a message →
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 Dinh Hoang Tam Binh — Ho Chi Minh City, Vietnam</p>
+</footer>
+
+<script>
+  // Cursor glow
+  const glow = document.getElementById('glow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.skill-card, .exp-item, .project-card, .stack-cat').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
